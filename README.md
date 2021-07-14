@@ -14,7 +14,7 @@ see [Benny](https://caderek.github.io/benny/)
 
 `sodium-native` is the fastest choice, but with it comes a hard to fulfill dependency in some environments.
 
-It might be preferable to use the Node.js `crypto.sign()` and `crypto.verify()`, but they expect `PEM` encoded public and private keys. Is there a way to use raw keys? If `PEM` encoded keys are not rehydrated back to Node `KeyObject` form then the sign/verify operations can be much slower. `ed25519` signing is available in Node.js 12+ which is currently the oldest supported LTS version.
+It might be preferable to use the Node.js `crypto.sign()` and `crypto.verify()`, but it expects `PEM` or `DER` encoded public and private keys. It is possible to convert the raw bytes of a key seed to native crypto `KeyObject` form using the awesome [ipfs-shipyard/js-crypto-key-composer](https://github.com/ipfs-shipyard/js-crypto-key-composer). If `PEM` encoded keys are not rehydrated back to Node `KeyObject` form then the sign/verify operations can be much slower. `ed25519` signing is available in Node.js 12+ which is currently the oldest supported LTS version.
 
 `tweetnacl-js` makes a very good pure Javascript fallback for use in other environments or the browser, but it is by far the slowest option.
 
@@ -66,4 +66,26 @@ Finished 4 cases!
 Saved to: benchmark/results/verify.json
 
 Saved to: benchmark/results/verify.chart.html
+```
+
+## Compatibility
+
+There is a [compat.js](compat.js) file in this repository that when run with `node compat.js` will generate, from a common 32 byte seed, a keypair for each of the following, and then sign and verify the signatures in a matrix of all three options. This shows a path to using whichever library suits your needs, with the ability to verify detached signatures using one of the others.
+
+* [tweetnacl-js](https://github.com/dchest/tweetnacl-js)
+* [sodium-native](https://github.com/sodium-friends/sodium-native/)
+* [Node.js Crypto](https://nodejs.org/api/crypto.html)
+
+```sh
+$ node compat.js
+Seed: a16f89fbee1c7ca27a595a3e0eb70c067f82c3b9c830274b7a30aafab2fdf982
+tweetnacl-js : self : OK
+tweetnacl-js : sodium-native : OK
+tweetnacl-js : node crypto : OK
+sodium-native : self : OK
+sodium-native : tweetnacl-js : OK
+sodium-native : node crypto : OK
+node crypto : self : OK
+node crypto : tweetnal-js : OK
+node crypto : sodium-native : OK
 ```
