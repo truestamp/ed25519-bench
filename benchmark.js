@@ -25,7 +25,7 @@ for (i = 0; i < m.length; i++) {
 }
 
 b.suite(
-  "tweetnacl vs. sodium-native vs crypto",
+  "tweetnacl vs. sodium-native vs. crypto",
 
   b.add("sign w/ tweetnacl", () => {
     let sm = nacl.sign(m, naclKeypair.secretKey)
